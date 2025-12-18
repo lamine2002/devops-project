@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: tp2
+data:
+  LOGIC_API_URL: "http://logic-api:5000"
+  FEEDBACK_API_URL: "http://feedback-api:9000"
