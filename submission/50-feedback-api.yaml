@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: feedback-api
+  namespace: tp2
+  labels:
+    app: feedback-api
+spec:
+  selector:
+    app: feedback-api
+  ports:
+    - name: http
+      port: 9000
+      targetPort: 5001
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feedback-api-headless
+  namespace: tp2
+  labels:
+    app: feedback-api
+spec:
+  clusterIP: None
+  selector:
+    app: feedback-api
+  ports:
+    - name: http
+      port: 9000
+      targetPort: 5001
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: feedback-api
+  namespace: tp2
+spec:
+  serviceName: feedback-api-headless
+  replicas: 2
+  selector:
+    matchLabels:
+      app: feedback-api
+  template:
+    metadata:
+      labels:
+        app: feedback-api
+    spec:
+      containers:
+        - name: feedback-api
+          image: docker.io/lamine2002/feedback-api:submission
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5001
+          env:
+            - name: DATABASE_DIR
+              value: /usr/db
+          volumeMounts:
+            - name: feedback-db
+              mountPath: /usr/db
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
+  volumeClaimTemplates:
+    - metadata:
+        name: feedback-db
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
