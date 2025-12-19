@@ -32,3 +32,30 @@ Déployer l’ensemble des ressources Kubernetes en une seule commande :
 
 ```bash
 kubectl apply -f ./submission
+
+```
+
+## Accès aux services (HTTPS)
+
+> ⚠️ Le certificat TLS est **auto-signé** ; un avertissement du navigateur est attendu.
+
+### Accès à l'application
+
+| Composant | URL |
+|----------|-----|
+| UI (Frontend) | https://127.0.0.1/ |
+| Admin | https://127.0.0.1/admin/feedback |
+
+---
+
+### Accès aux outils de monitoring
+
+| Outil | URL |
+|------|-----|
+| Grafana (UI) | https://127.0.0.1/grafana |
+| Prometheus (UI) | https://127.0.0.1/prometheus/ |
+| Loki (API – readiness) | https://127.0.0.1/loki/ready |
+
+> **Note** : Loki ne fournit pas d’interface web.  
+> Les logs sont consultables via **Grafana → Explore → Logs**.
+---
