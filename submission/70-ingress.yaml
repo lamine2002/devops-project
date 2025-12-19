@@ -4,7 +4,7 @@ metadata:
   name: frontend-ingress
   namespace: tp2
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   tls:
     - secretName: tp2-tls
