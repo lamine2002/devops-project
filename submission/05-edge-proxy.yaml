@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: edge-proxy
+  namespace: ingress-nginx
+spec:
+  selector:
+    matchLabels:
+      app: edge-proxy
+  template:
+    metadata:
+      labels:
+        app: edge-proxy
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+
+      containers:
+      - name: tcp-80
+        image: nicolaka/netshoot:latest
+        command: ["/bin/sh","-lc"]
+        args:
+          - |
+            socat -d -d TCP-LISTEN:80,fork,reuseaddr \
+              TCP:ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+        securityContext:
+          runAsUser: 0
+          allowPrivilegeEscalation: false
+
+      - name: tcp-443
+        image: nicolaka/netshoot:latest
+        command: ["/bin/sh","-lc"]
+        args:
+          - |
+            socat -d -d TCP-LISTEN:443,fork,reuseaddr \
+              TCP:ingress-nginx-controller.ingress-nginx.svc.cluster.local:443
+        securityContext:
+          runAsUser: 0
+          allowPrivilegeEscalation: false
