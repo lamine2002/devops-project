@@ -11,7 +11,7 @@ spec:
   ports:
     - name: http
       port: 9000
-      targetPort: 5001
+      targetPort: 80
   type: ClusterIP
 ---
 apiVersion: v1
@@ -28,7 +28,7 @@ spec:
   ports:
     - name: http
       port: 9000
-      targetPort: 5001
+      targetPort: 80
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -51,7 +51,7 @@ spec:
           image: docker.io/lamine2002/feedback-api:submission
           imagePullPolicy: Always
           ports:
-            - containerPort: 5001
+            - containerPort: 80
           env:
             - name: DATABASE_DIR
               value: /usr/db
@@ -61,7 +61,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 5001
+              port: 80
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2

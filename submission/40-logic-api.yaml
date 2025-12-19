@@ -15,12 +15,36 @@ spec:
       labels:
         app: logic-api
     spec:
+      volumes:
+        - name: nltk-data
+          emptyDir: {}
+      initContainers:
+        - name: download-nltk-corpora
+          image: docker.io/lamine2002/logic-api:submission
+          imagePullPolicy: Always
+          env:
+            - name: NLTK_DATA
+              value: /nltk_data
+          command: ["sh", "-c"]
+          args:
+            - >
+              python -m textblob.download_corpora -q &&
+              python -c "import nltk; nltk.download('punkt_tab', quiet=True)" || true
+          volumeMounts:
+            - name: nltk-data
+              mountPath: /nltk_data
       containers:
         - name: logic-api
-          image: localregistry.lc:30500/logic-api:submission
+          image: docker.io/lamine2002/logic-api:submission
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
+          env:
+            - name: NLTK_DATA
+              value: /nltk_data
+          volumeMounts:
+            - name: nltk-data
+              mountPath: /nltk_data
           livenessProbe:
             httpGet:
               path: /health
