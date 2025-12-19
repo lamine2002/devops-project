@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: localregistry.lc:30500/frontend:submission
+          image: docker.io/lamine2002/frontend:submission
           imagePullPolicy: Always
           ports:
             - containerPort: 80
