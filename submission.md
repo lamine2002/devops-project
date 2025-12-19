@@ -58,4 +58,6 @@ kubectl apply -f ./submission
 
 > **Note** : Loki ne fournit pas d’interface web.  
 > Les logs sont consultables via **Grafana → Explore → Logs**.
+> Utilisation de Flask==2.0.3 et Werkzeug==2.0.3 dans requirements.txt de logic-api pour éviter des problèmes de compatibilité.
+> Utilisation de **eclipse-temurin:8-jre-alpine** pour les images de feedback-api.
 ---
